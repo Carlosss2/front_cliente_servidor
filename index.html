@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumo de API</title>
+    <style>
+        .container { margin-bottom: 20px; }
+        .gender-container { display: flex; gap: 20px; }
+        .gender-box { border: 1px solid #ccc; padding: 10px; width: 200px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input type="text" id="nameInput" placeholder="Nombre">
+        <input type="text" id="ageInput" placeholder="Edad">
+        <input type="text" id="sexoInput" placeholder="sexo">
+        <button onclick="fetchPeople()">Agregar</button>
+    </div>
+    
+    <div class="gender-container">
+        <div id="maleContainer" class="gender-box">
+            <h3>Masculino</h3>
+            <div id="maleList"></div>
+        </div>
+        <div id="femaleContainer" class="gender-box">
+            <h3>Femenino</h3>
+            <div id="femaleList"></div>
+        </div>
+    </div>
+    
+    <div>
+        <h3>Personas encontradas</h3>
+        <div id="peopleList"></div>
+    </div>
+    
+    <script>
+        async function fetchPeople() {
+            const name = document.getElementById('nameInput').value;
+            const age = document.getElementById('ageInput').value;
+            
+            try {
+                const response = await fetch(`https://api.ejemplo.com/personas?name=${name}&age=${age}`);
+                const data = await response.json();
+                displayPeople(data);
+            } catch (error) {
+                console.error('Error al obtener datos:', error);
+            }
+        }
+        
+        function displayPeople(people) {
+            const peopleList = document.getElementById('peopleList');
+            const maleList = document.getElementById('maleList');
+            const femaleList = document.getElementById('femaleList');
+            
+            peopleList.innerHTML = '';
+            maleList.innerHTML = '';
+            femaleList.innerHTML = '';
+            
+            people.forEach(person => {
+                const personDiv = document.createElement('div');
+                personDiv.textContent = `${person.name} - ${person.age} años - ${person.gender}`;
+                peopleList.appendChild(personDiv);
+                
+                if (person.gender === 'male') {
+                    maleList.appendChild(personDiv.cloneNode(true));
+                } else if (person.gender === 'female') {
+                    femaleList.appendChild(personDiv.cloneNode(true));
+                }
+            });
+        }
+    </script>
+</body>
+</html>
